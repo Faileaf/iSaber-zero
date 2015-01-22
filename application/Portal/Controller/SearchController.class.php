@@ -9,14 +9,25 @@ class SearchController extends HomeBaseController {
     //文章内页
     public function index() {
     	$_GET = array_merge($_GET, $_POST);
-		$k = I("get.keyword");
-		
-		if (empty($k)) {
-			$this -> error("关键词不能为空！请重新输入！");
+		$m = $_REQUEST['model'];
+		if (empty($m)){
+			$this -> error("查询失败,您查询的方式不正确");
 		}
-		$this -> assign("keyword", $k);
-		$this -> display(":search");
+		if ($m=='users'){
+			$m='posts';
+		}
+		$dd = M($m);
+		$arr =$_REQUEST;
+		foreach ($arr as $key=>$value)
+			{
+			    if ($key==='model')
+			     unset($arr[$key]);
+				 if (is_numeric($value)){
+				 	$arr[$key]=(int)$value;
+				 }
+			}
+		$xx=$dd->where($arr)->select();
+		$this->dd=$xx;
+		$this->display(":search");
     }
-    
-    
 }
